@@ -146,7 +146,7 @@
             id: "01",
             title: "VIDEO ANGKATAN RECAP STARBHAK 2026",
             sub: "YEARBOOK RECAP / STARBHAK 2026",
-            image: "https://dl.dropboxusercontent.com/scl/fi/4nso6pmb8dsalt6i0y0pn/thumb-starbhak.png?rlkey=wes58lny32v01nthgs1mczstf",
+            image: "https://dl.dropboxusercontent.com/scl/fi/4nso6pmb8dsalt6i0y0pn/thumb-starbhak.png?rlkey=wes58lny32v01nthgs1mczstf&raw=1",
             desc: "Kami dipercaya sepenuhnya sebagai tim kreatif di balik proses penyuntingan (editing) video angkatan Starbhak 2026, merangkai setiap momen berharga sekolah menjadi narasi visual sinematik yang tak terlupakan."
           },
           {
@@ -160,7 +160,7 @@
             id: "03",
             title: "MINIMATION PARADE OTAK KANAN 8",
             sub: "WINNER / THE MOST CREATIVE CATEGORY",
-            image: "https://dl.dropboxusercontent.com/scl/fi/yi9fh5qxs1rmt8nle2uw7/thumb-minimation.jpg?rlkey=enkl4r7io7wysbk0c08lfg282",
+            image: "https://dl.dropboxusercontent.com/scl/fi/yi9fh5qxs1rmt8nle2uw7/thumb-minimation.jpg?rlkey=enkl4r7io7wysbk0c08lfg282&raw=1",
             desc: "Sebuah pencapaian luar biasa di mana tim kami berhasil menjuarai kategori 'The Most Creative' melalui karya visual yang inovatif."
           }
         ];
@@ -172,7 +172,7 @@
             category: "Web Development", 
             client: "Hanaskar Project", 
             image: "", 
-            video: "https://dl.dropboxusercontent.com/scl/fi/a53xsfj8ggmudj1b2daci/Preview-Web.mp4?rlkey=6tiupqek8dfnxk4m3m9nmg865",
+            video: "https://dl.dropboxusercontent.com/scl/fi/a53xsfj8ggmudj1b2daci/Preview-Web.mp4?rlkey=6tiupqek8dfnxk4m3m9nmg865&raw=1",
             desc: "Undangan pernikahan digital interaktif premium yang dibuat oleh HANASKAR Project. Mengedepankan kemudahan navigasi, RSVP instan, album foto interaktif, pemutar audio, serta transisi antar seksi yang sangat halus dan responsif di berbagai gawai."
           },
           { 
@@ -181,7 +181,7 @@
             category: "Web Development", 
             client: "Hanaskar Project", 
             image: "", 
-            video: "https://dl.dropboxusercontent.com/scl/fi/wetaykmvtg7g3fw46hnx9/Preview-Porto.mp4?rlkey=jllo2saw8hws99bsmam6emdbw",
+            video: "https://dl.dropboxusercontent.com/scl/fi/wetaykmvtg7g3fw46hnx9/Preview-Porto.mp4?rlkey=jllo2saw8hws99bsmam6emdbw&raw=1",
             desc: "Website portofolio interaktif premium buatan HANASKAR Project dengan desain berestetika tinggi, animasi transisi yang modern dan interaksi yang kaya untuk memamerkan karya kreatif Anda."
           },
           { 
@@ -206,7 +206,7 @@
             category: "Motion Graphics", 
             client: "BDI Production", 
             image: "https://images.unsplash.com/photo-1563291074-2bf8677ac0e5?auto=format&fit=crop&q=80&w=800",
-            desc: "Visual aset motion grafis spesial perayaan Tahun Baru Imlek dengan paduan warna oriental klasik dan transisi animasi modern bernilai estetik tinggi."
+            desc: "Visual aset motion grafis spesial perayaan Tahun Baru Imlek dengan paduan warna oriental klasik and transisi animasi modern bernilai estetik tinggi."
           },
           { 
             id: 6, 
@@ -223,7 +223,8 @@
             id: 1, 
             name: "Muhamad Fadlan Iskandar", 
             skillGroup: ["Video & Motion", "Website Builder"], 
-            image: "https://dl.dropboxusercontent.com/scl/fi/88q8761ixeeh49l9kb8ij/Muhammad-Fadlan-Iskandar.JPG?rlkey=wnjwwn29tqz8u01nlowyfxkxy&raw=1", 
+            // PEMBARUAN: Menggunakan tautan baru Fadlan dalam format direct stream yang stabil
+            image: "https://dl.dropboxusercontent.com/scl/fi/jmp4ktaiadqh4m160o3i0/Muhammad-Fadlan-Iskandar.JPG?rlkey=gsvc80d1a9yzq1wr9bt60u778&raw=1", 
             specialty: "Video Editor, Motion Graphics & Portfolio Builder", 
             about: "Fadlan adalah ahli narasi visual dan pengembang web kreatif yang menggabungkan teknik editing sinematik, motion graphics modern, dan keahlian web development untuk membangun platform portofolio interaktif yang berjiwa.",
             portfolioUrl: "https://www.faldanggaeppl.online/",
@@ -253,6 +254,7 @@
             id: 3, 
             name: "Natan Izz Wardana", 
             skillGroup: ["Scriptwriter"], 
+            // PEMBARUAN: Menggunakan tautan baru Natan dalam format direct stream yang stabil
             image: "https://dl.dropboxusercontent.com/scl/fi/gvn5h9h1bexlbwnadf4x4/tann.jpeg?rlkey=1qgwcfptiseyqh8gkxwzp8b9&raw=1", 
             specialty: "Scriptwriter & Digital Director", 
             about: "Natan memiliki peran krusial sebagai konseptor ide-ide menarik yang diadaptasi ke dalam narasi visual. Ia juga memiliki pengalaman Directing yang sangat kuat dalam ekosistem konten digital.",
@@ -409,7 +411,7 @@
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
                       {filteredTalents.map((talent) => (
                         <div key={talent.id} className="reveal group cursor-pointer flex flex-col" onClick={() => { setSelectedTalent(talent); navigateTo('detail'); }}>
-                          {/* Image container without founder/member badge */}
+                          {/* Image container with fallback */}
                           <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900 border border-white/5 mb-6 md:mb-8 transition-all duration-500 group-hover:shadow-[0_20px_40px_-10px_rgba(220,38,38,0.3)]">
                             <img 
                               src={talent.image} 

@@ -223,7 +223,6 @@
             id: 1, 
             name: "Muhamad Fadlan Iskandar", 
             skillGroup: ["Video & Motion", "Website Builder"], 
-            // PEMBARUAN: Menggunakan tautan baru Fadlan dalam format direct stream yang stabil
             image: "https://dl.dropboxusercontent.com/scl/fi/jmp4ktaiadqh4m160o3i0/Muhammad-Fadlan-Iskandar.JPG?rlkey=gsvc80d1a9yzq1wr9bt60u778&raw=1", 
             specialty: "Video Editor, Motion Graphics & Portfolio Builder", 
             about: "Fadlan adalah ahli narasi visual dan pengembang web kreatif yang menggabungkan teknik editing sinematik, motion graphics modern, dan keahlian web development untuk membangun platform portofolio interaktif yang berjiwa.",
@@ -254,8 +253,8 @@
             id: 3, 
             name: "Natan Izz Wardana", 
             skillGroup: ["Scriptwriter"], 
-            // PEMBARUAN: Menggunakan tautan baru Natan dalam format direct stream yang stabil
-            image: "https://dl.dropboxusercontent.com/scl/fi/gvn5h9h1bexlbwnadf4x4/tann.jpeg?rlkey=1qgwcfptiseyqh8gkxwzp8b9&raw=1", 
+            // PERBAIKAN FINAL: Menyertakan parameter st=h1o3qitl wajib untuk memvalidasi token sesi Dropbox Natan
+            image: "https://dl.dropboxusercontent.com/scl/fi/gvn5h9h1bexlbwnadf4x4/tann.jpeg?rlkey=1qgwcfptiseyqh8gkxwzp8b9&st=h1o3qitl&raw=1", 
             specialty: "Scriptwriter & Digital Director", 
             about: "Natan memiliki peran krusial sebagai konseptor ide-ide menarik yang diadaptasi ke dalam narasi visual. Ia juga memiliki pengalaman Directing yang sangat kuat dalam ekosistem konten digital.",
             portfolioUrl: "#",
@@ -418,6 +417,15 @@
                               alt={talent.name} 
                               className="w-full h-full object-cover opacity-100 group-hover:scale-105 transition-all duration-1000" 
                               onError={(e) => { 
+                                // SMART AUTO-RETRY FALLBACK: Mencoba menggunakan domain alternatif jika raw server mengalami kegagalan
+                                if (!e.target.dataset.retried) {
+                                  e.target.dataset.retried = "true";
+                                  const origUrl = e.target.src;
+                                  if (origUrl.includes("dl.dropboxusercontent.com")) {
+                                    e.target.src = origUrl.replace("dl.dropboxusercontent.com", "www.dropbox.com");
+                                    return;
+                                  }
+                                }
                                 e.target.onerror = null; 
                                 e.target.src = `https://placehold.co/400x500/111111/ffffff?text=${encodeURIComponent(talent.name)}`; 
                               }}
@@ -482,6 +490,14 @@
                                   alt={selectedTalent.name} 
                                   className="w-full h-full object-cover opacity-100" 
                                   onError={(e) => { 
+                                    if (!e.target.dataset.retried) {
+                                      e.target.dataset.retried = "true";
+                                      const origUrl = e.target.src;
+                                      if (origUrl.includes("dl.dropboxusercontent.com")) {
+                                        e.target.src = origUrl.replace("dl.dropboxusercontent.com", "www.dropbox.com");
+                                        return;
+                                      }
+                                    }
                                     e.target.onerror = null; 
                                     e.target.src = `https://placehold.co/400x500/111111/ffffff?text=${encodeURIComponent(selectedTalent.name)}`; 
                                   }}

@@ -50,6 +50,10 @@
             opacity: 0; 
         }
 
+        .animate-slide-up-chat {
+            animation: slideUpChat 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
         @keyframes slideRight { 
             0% { transform: translateX(-30px); opacity: 0; filter: blur(5px); } 
             100% { transform: translateX(0); opacity: 1; filter: blur(0); } 
@@ -57,6 +61,10 @@
         @keyframes drawStroke { 
             0% { opacity: 0; transform: scale(1.05); filter: blur(10px); } 
             100% { opacity: 1; transform: scale(1); filter: blur(0); } 
+        }
+        @keyframes slideUpChat {
+            0% { transform: translateY(50px) scale(0.9); opacity: 0; filter: blur(4px); }
+            100% { transform: translateY(0) scale(1); opacity: 1; filter: blur(0); }
         }
 
         ::-webkit-scrollbar { width: 4px; }
@@ -136,6 +144,46 @@
                     {icons[name] || null}
                 </svg>
             );
+        };
+
+        // =====================================================================
+        // DATA UNTUK FITUR NOTIFIKASI AKTIVITAS CHAT RANDOM
+        // =====================================================================
+        const RANDOM_SENDERS = [
+          "Ahmad Reza", "Siti Rahma", "Jessica Tan", "Budi Santoso", "Devon Wijaya", 
+          "Rara Amalia", "Chandra Kirana", "Putri Utami", "Andi Pratama", "Kevin Sanjaya",
+          "Gita Permata", "Rian Hidayat", "Michael Wong", "Salsa Bella", "Aris Munandar"
+        ];
+
+        const MOCK_MESSAGES = {
+          1: [ // Fadlan (Video, Website)
+            "Bro, portofolio website gua kira-kira bisa rampung sebelum weekend ini?",
+            "Halo Fadlan, mau nanya pricelist jasa bikin web portfolio interaktif dong.",
+            "Keren banget editing video starbhak recap-nya, bisa kolaborasi project baru?",
+            "Fadlan, file source-code website undangan kemarin boleh dikirim ulang?",
+            "Project website wedding invitation-nya masih open slot buat bulan depan?"
+          ],
+          2: [ // Luthfi (Video & Motion)
+            "Luthfi, konsep dokumenter sejarah kemarin udah di-approve sama produser!",
+            "Bisa minta tolong revisi sedikit color grading di scene ke-3 video komersial?",
+            "Ada waktu luang minggu ini buat shooting mini series baru kita?",
+            "Halo, buat editing video dokumenter durasi 15 menit biayanya berapa ya?",
+            "Gokil Luthfi! Suka banget ritme editing lu di video Starbhak, jempolan bro!"
+          ],
+          3: [ // Natan (Scriptwriter)
+            "Natan, naskah script film pendek fiksi ilmiahnya udah dibaca klien, mereka suka!",
+            "Bisa bikinin storyline kreatif buat iklan komersial kosmetik ga, Nat?",
+            "Konsep creative directing lu buat project kemarin bener-bener dapet feel-nya.",
+            "Natan, ada ide plot twist menarik buat mini series genre thriller?",
+            "Boleh diskusi singkat soal konsep naskah video cinematic profile besok?"
+          ],
+          4: [ // Faris (3D & Graphic)
+            "Faris, asset modeling 3D Blender buat parade otak kanan udah selesai semua?",
+            "Halo bro, bisa bikinin motion graphics bumper buat intro channel YouTube gua?",
+            "Desain poster festival kemarin dapet respon positif banget dari pengunjung!",
+            "Faris, tolong bikinin model 3D mockup produk botol minuman dong.",
+            "Kerja bagus Faris, revisi desain poster kemarin udah klop banget!"
+          ]
         };
 
         // =====================================================================
@@ -253,8 +301,7 @@
             id: 3, 
             name: "Natan Izz Wardana", 
             skillGroup: ["Scriptwriter"], 
-            // PERBAIKAN FINAL: Menyertakan parameter st=h1o3qitl wajib untuk memvalidasi token sesi Dropbox Natan
-            image: "https://dl.dropboxusercontent.com/scl/fi/gvn5h9h1bexlbwnadf4x4/tann.jpeg?rlkey=1qgwcfptiseyqh8gkxwzp8b9&st=h1o3qitl&raw=1", 
+            image: "https://dl.dropboxusercontent.com/scl/fi/gvn5h9h1bexlbwnadf4x4/tann.jpeg?rlkey=1qgwcf7ptiseyqh8gkxwzp8b9&st=h1o3qitl&raw=1", 
             specialty: "Scriptwriter & Digital Director", 
             about: "Natan memiliki peran krusial sebagai konseptor ide-ide menarik yang diadaptasi ke dalam narasi visual. Ia juga memiliki pengalaman Directing yang sangat kuat dalam ekosistem konten digital.",
             portfolioUrl: "#",
@@ -352,9 +399,11 @@
           const [isMenuOpen, setIsMenuOpen] = useState(false);
           const [activePersonilFilter, setActivePersonilFilter] = useState("Semua");
           const [activeProjectModal, setActiveProjectModal] = useState(null);
+          const [liveChats, setLiveChats] = useState([]); // State untuk notifikasi chat live
 
           const personilFilters = ["Semua", "Video & Motion", "Scriptwriter", "Website Builder", "3D & Graphic"];
 
+          // Effect untuk memicu animasi reveal elemen HTML saat scroll
           useEffect(() => {
             const observer = new IntersectionObserver((entries) => {
               entries.forEach((entry) => {
@@ -365,6 +414,7 @@
             return () => observer.disconnect();
           }, [view, activePersonilFilter]);
 
+          // Slider banner promo project utama di beranda
           useEffect(() => {
             const timer = setInterval(() => {
               if (view === 'home') setCurrentSlide((prev) => (prev + 1) % FEATURED_PROJECTS.length);
@@ -372,10 +422,44 @@
             return () => clearInterval(timer);
           }, [view]);
 
+          // Navigasi bar transisi gelap saat di-scroll
           useEffect(() => {
             const handleScroll = () => setScrolled(window.scrollY > 80);
             window.addEventListener('scroll', handleScroll);
             return () => window.removeEventListener('scroll', handleScroll);
+          }, []);
+
+          // =====================================================================
+          // LOGIKA TIMED CHAT NOTIFICATION (SISTEM TIAP 10 DETIK)
+          // =====================================================================
+          useEffect(() => {
+            const chatInterval = setInterval(() => {
+              // Pilih personil acak
+              const randomTalent = TALENTS[Math.floor(Math.random() * TALENTS.length)];
+              // Pilih nama pengirim acak
+              const randomSender = RANDOM_SENDERS[Math.floor(Math.random() * RANDOM_SENDERS.length)];
+              // Ambil daftar pesan acak milik personil terpilih
+              const messages = MOCK_MESSAGES[randomTalent.id];
+              const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+              
+              const newChatNotification = {
+                id: Date.now(),
+                sender: randomSender,
+                targetName: randomTalent.name,
+                message: randomMessage
+              };
+
+              // Hanya tampilkan 1 chat terpopuler di layar untuk menjaga minimalisasi desain
+              setLiveChats([newChatNotification]);
+              
+              // Sembunyikan otomatis gelembung chat setelah 6 detik berlalu
+              setTimeout(() => {
+                setLiveChats(prev => prev.filter(c => c.id !== newChatNotification.id));
+              }, 6000);
+
+            }, 10000); // Trigger setiap 10 detik sekali
+
+            return () => clearInterval(chatInterval);
           }, []);
 
           const navigateTo = (page) => {
@@ -417,15 +501,6 @@
                               alt={talent.name} 
                               className="w-full h-full object-cover opacity-100 group-hover:scale-105 transition-all duration-1000" 
                               onError={(e) => { 
-                                // SMART AUTO-RETRY FALLBACK: Mencoba menggunakan domain alternatif jika raw server mengalami kegagalan
-                                if (!e.target.dataset.retried) {
-                                  e.target.dataset.retried = "true";
-                                  const origUrl = e.target.src;
-                                  if (origUrl.includes("dl.dropboxusercontent.com")) {
-                                    e.target.src = origUrl.replace("dl.dropboxusercontent.com", "www.dropbox.com");
-                                    return;
-                                  }
-                                }
                                 e.target.onerror = null; 
                                 e.target.src = `https://placehold.co/400x500/111111/ffffff?text=${encodeURIComponent(talent.name)}`; 
                               }}
@@ -490,14 +565,6 @@
                                   alt={selectedTalent.name} 
                                   className="w-full h-full object-cover opacity-100" 
                                   onError={(e) => { 
-                                    if (!e.target.dataset.retried) {
-                                      e.target.dataset.retried = "true";
-                                      const origUrl = e.target.src;
-                                      if (origUrl.includes("dl.dropboxusercontent.com")) {
-                                        e.target.src = origUrl.replace("dl.dropboxusercontent.com", "www.dropbox.com");
-                                        return;
-                                      }
-                                    }
                                     e.target.onerror = null; 
                                     e.target.src = `https://placehold.co/400x500/111111/ffffff?text=${encodeURIComponent(selectedTalent.name)}`; 
                                   }}
@@ -655,6 +722,34 @@
               </nav>
               <div className={`fixed inset-0 z-[250] bg-black transition-transform duration-700 ${isMenuOpen ? 'translate-y-0' : '-translate-y-full'} lg:hidden flex flex-col items-center justify-center gap-8 text-center`}><button onClick={() => setIsMenuOpen(false)} className="absolute top-10 right-8 text-white"><Icon name="X" size={32}/></button>{["BERANDA", "PERSONIL", "TENTANG", "LAYANAN", "ON AIR"].map(item => (<button key={item} onClick={() => navigateTo(item.toLowerCase().replace(' ', ''))} className="text-2xl font-black uppercase tracking-widest hover:text-red-600 transition-colors text-white text-center">{item}</button>))}</div>
               {renderContent()}
+
+              {/* =====================================================================
+                  GELEMBUNG CHAT LIVE NOTIFICATION FUTURISTIK (DIBAGIAN POJOK KIRI BAWAH)
+                  ===================================================================== */}
+              {liveChats.map(chat => (
+                <div key={chat.id} className="fixed bottom-6 left-6 z-[200] max-w-sm w-[90%] sm:w-80 bg-black/95 border border-red-600/30 backdrop-blur-md p-4 rounded-lg shadow-[0_10px_30px_rgba(220,38,38,0.2)] flex items-start gap-4 animate-slide-up-chat">
+                  <div className="relative shrink-0">
+                    <div className="w-10 h-10 bg-zinc-900 border border-white/10 rounded-full flex items-center justify-center font-bold text-red-500 uppercase text-xs">
+                      {chat.sender.split(' ').map(n => n[0]).join('')}
+                    </div>
+                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-black animate-pulse"></span>
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <h4 className="text-xs font-black text-white truncate">{chat.sender}</h4>
+                      <span className="text-[7px] text-gray-500 shrink-0 uppercase font-mono tracking-wider">// CHAT TO {chat.targetName.split(' ')[1] || chat.targetName.split(' ')[0]}</span>
+                    </div>
+                    <p className="text-[11px] text-zinc-300 leading-relaxed font-light">{chat.message}</p>
+                    <div className="flex items-center gap-1.5 mt-2 text-[8px] font-bold text-red-600 font-mono uppercase tracking-widest">
+                      <span className="inline-block w-1 h-1 bg-red-600 rounded-full animate-ping"></span>
+                      Live Activity • Just Now
+                    </div>
+                  </div>
+                  <button onClick={() => setLiveChats([])} className="text-zinc-600 hover:text-white transition-colors shrink-0">
+                    <Icon name="X" size={14} />
+                  </button>
+                </div>
+              ))}
 
               {/* =====================================================================
                   MODAL POP-UP PREVIEW PORTFOLIO PREMIUM (DENGAN PEMUTAR VIDEO)

@@ -223,7 +223,7 @@
             id: 1, 
             name: "Muhamad Fadlan Iskandar", 
             skillGroup: ["Video & Motion", "Website Builder"], 
-            image: "https://dl.dropboxusercontent.com/scl/fi/88q8761ixeeh49l9kb8ij/Muhammad-Fadlan-Iskandar.JPG?rlkey=wnjwwn29tqz8u01nlowyfxkxy", 
+            image: "https://dl.dropboxusercontent.com/scl/fi/88q8761ixeeh49l9kb8ij/Muhammad-Fadlan-Iskandar.JPG?rlkey=wnjwwn29tqz8u01nlowyfxkxy&raw=1", 
             specialty: "Video Editor, Motion Graphics & Portfolio Builder", 
             about: "Fadlan adalah ahli narasi visual dan pengembang web kreatif yang menggabungkan teknik editing sinematik, motion graphics modern, dan keahlian web development untuk membangun platform portofolio interaktif yang berjiwa.",
             portfolioUrl: "https://www.faldanggaeppl.online/",
@@ -236,7 +236,7 @@
             id: 2, 
             name: "Luthfi Rasendriya Hanasta", 
             skillGroup: ["Video & Motion"], 
-            image: "https://dl.dropboxusercontent.com/scl/fi/0z5qwoemwb3i33dlavirn/WhatsApp-Image-2025-10-15-at-15.10.29_19a13c0c.jpg?rlkey=1wq3xowsm6566xbv3e1rkopzj", 
+            image: "https://dl.dropboxusercontent.com/scl/fi/0z5qwoemwb3i33dlavirn/WhatsApp-Image-2025-10-15-at-15.10.29_19a13c0c.jpg?rlkey=1wq3xowsm6566xbv3e1rkopzj&raw=1", 
             specialty: "Content Editor & Documentary Video Editor",
             about: "Luthfi adalah spesialis dalam dokumenter dan konten komersial. Ia percaya bahwa sebuah video bukan hanya tentang gambar, melainkan tentang emosi yang tersampaikan melalui visual, ritme editing, and detail sound yang membangun cerita.",
             portfolioUrl: "#",
@@ -253,8 +253,7 @@
             id: 3, 
             name: "Natan Izz Wardana", 
             skillGroup: ["Scriptwriter"], 
-            // PEMBARUAN: Menggunakan foto Natan baru dengan direct link dl.dropboxusercontent.com
-            image: "https://dl.dropboxusercontent.com/scl/fi/gvn5h9h1bexlbwnadf4x4/tann.jpeg?rlkey=1qgwcfptiseyqh8gkxwzp8b9", 
+            image: "https://dl.dropboxusercontent.com/scl/fi/gvn5h9h1bexlbwnadf4x4/tann.jpeg?rlkey=1qgwcfptiseyqh8gkxwzp8b9&raw=1", 
             specialty: "Scriptwriter & Digital Director", 
             about: "Natan memiliki peran krusial sebagai konseptor ide-ide menarik yang diadaptasi ke dalam narasi visual. Ia juga memiliki pengalaman Directing yang sangat kuat dalam ekosistem konten digital.",
             portfolioUrl: "#",
@@ -267,7 +266,7 @@
             id: 4, 
             name: "Faris Fadilah Nasir", 
             skillGroup: ["Video & Motion", "3D & Graphic"], 
-            image: "https://dl.dropboxusercontent.com/scl/fi/rxuht7rb25pppud8j4agn/faris.JPEG?rlkey=3imekifkhx7nwf4xdwvm4fy0v", 
+            image: "https://dl.dropboxusercontent.com/scl/fi/rxuht7rb25pppud8j4agn/faris.JPEG?rlkey=3imekifkhx7nwf4xdwvm4fy0v&raw=1", 
             specialty: "3D Artist & Graphic Designer", 
             about: "Faris percaya bahwa visual yang baik tidak hanya dilihat, tetapi juga dirasakan. Dengan pengalaman di bidang 3D art, desain grafis, dan video editing, ia berkontribusi dalam mengembangkan aset visual, memperkuat identitas sebuah karya, serta menghadirkan pengalaman yang lebih menarik dan berkesan bagi audiens.",
             portfolioUrl: "#",
@@ -412,7 +411,15 @@
                         <div key={talent.id} className="reveal group cursor-pointer flex flex-col" onClick={() => { setSelectedTalent(talent); navigateTo('detail'); }}>
                           {/* Image container without founder/member badge */}
                           <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900 border border-white/5 mb-6 md:mb-8 transition-all duration-500 group-hover:shadow-[0_20px_40px_-10px_rgba(220,38,38,0.3)]">
-                            <img src={talent.image} alt={talent.name} className="w-full h-full object-cover opacity-100 group-hover:scale-105 transition-all duration-1000" />
+                            <img 
+                              src={talent.image} 
+                              alt={talent.name} 
+                              className="w-full h-full object-cover opacity-100 group-hover:scale-105 transition-all duration-1000" 
+                              onError={(e) => { 
+                                e.target.onerror = null; 
+                                e.target.src = `https://placehold.co/400x500/111111/ffffff?text=${encodeURIComponent(talent.name)}`; 
+                              }}
+                            />
                             <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-700 bg-white p-3 rounded-full text-black shadow-2xl scale-75 group-hover:scale-100"><Icon name="ArrowRight" size={18} /></div>
                           </div>
                           <div className="flex flex-col border-l-2 border-white/10 group-hover:border-red-600 pl-6 transition-all duration-500">
@@ -468,7 +475,15 @@
                      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-20 items-start">
                         <div className="lg:col-span-7">
                             <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900 border border-white/10 shadow-2xl rounded-sm">
-                                <img src={selectedTalent.image} alt={selectedTalent.name} className="w-full h-full object-cover opacity-100" />
+                                <img 
+                                  src={selectedTalent.image} 
+                                  alt={selectedTalent.name} 
+                                  className="w-full h-full object-cover opacity-100" 
+                                  onError={(e) => { 
+                                    e.target.onerror = null; 
+                                    e.target.src = `https://placehold.co/400x500/111111/ffffff?text=${encodeURIComponent(selectedTalent.name)}`; 
+                                  }}
+                                />
                             </div>
                         </div>
                         <div className="lg:col-span-5 md:sticky md:top-40 space-y-8 md:space-y-12">

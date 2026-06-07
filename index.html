@@ -26,11 +26,10 @@
     <script src="https://unpkg.com/react@18/umd/react.production.min.js" crossorigin></script>
     <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js" crossorigin></script>
     
-    <!-- Babel standalone CDN (untuk menerjemahkan JSX langsung di browser) -->
+    <!-- Babel standalone CDN -->
     <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
     <style>
-        /* Mengembalikan style kustom untuk transisi halus */
         .reveal { 
             opacity: 0; 
             transform: translateY(30px); 
@@ -140,7 +139,7 @@
         };
 
         // =====================================================================
-        // DATA PORTFOLIO & TIM
+        // DATA PORTFOLIO & TIM (DENGAN 4 TALENTA TERBAIK & TANPA KATEGORI JABATAN)
         // =====================================================================
         const FEATURED_PROJECTS = [
           {
@@ -223,11 +222,10 @@
           { 
             id: 1, 
             name: "Muhamad Fadlan Iskandar", 
-            category: "FOUNDER", 
             skillGroup: ["Video & Motion", "Website Builder"], 
             image: "https://www.dropbox.com/scl/fi/88q8761ixeeh49l9kb8ij/Muhammad-Fadlan-Iskandar.JPG?rlkey=wnjwwn29tqz8u01nlowyfxkxy&raw=1", 
             specialty: "Video Editor, Motion Graphics & Portfolio Builder", 
-            about: "Fadlan adalah founder sekaligus ahli narasi visual dan pengembang web kreatif yang menggabungkan teknik editing sinematik, motion graphics modern, dan keahlian web development untuk membangun platform portofolio interaktif yang berjiwa.",
+            about: "Fadlan adalah ahli narasi visual dan pengembang web kreatif yang menggabungkan teknik editing sinematik, motion graphics modern, dan keahlian web development untuk membangun platform portofolio interaktif yang berjiwa.",
             portfolioUrl: "https://www.faldanggaeppl.online/",
             experience: ["Film Pendek", "Mini Series", "Visual Effect", "Musik Video", "Konten Media Sosial", "Motion Graphics", "Bumper", "Portfolio Builder"], 
             software: ["Adobe Premiere Pro", "Adobe After Effects", "Capcut", "HTML"], 
@@ -237,11 +235,10 @@
           { 
             id: 2, 
             name: "Luthfi Rasendriya Hanasta", 
-            category: "FOUNDER", 
             skillGroup: ["Video & Motion"], 
             image: "https://www.dropbox.com/scl/fi/0z5qwoemwb3i33dlavirn/WhatsApp-Image-2025-10-15-at-15.10.29_19a13c0c.jpg?rlkey=1wq3xowsm6566xbv3e1rkopzj&st=gjqf7qei&raw=1", 
             specialty: "Content Editor & Documentary Video Editor",
-            about: "Luthfi adalah founder dengan spesialisasi dalam dokumenter and konten komersial. Ia percaya bahwa sebuah video bukan hanya tentang gambar, melainkan tentang emosi yang tersampaikan melalui visual, ritme editing, and detail sound yang membangun cerita.",
+            about: "Luthfi adalah spesialis dalam dokumenter dan konten komersial. Ia percaya bahwa sebuah video bukan hanya tentang gambar, melainkan tentang emosi yang tersampaikan melalui visual, ritme editing, and detail sound yang membangun cerita.",
             portfolioUrl: "#",
             experience: ["Film Pendek", "Mini Series", "Visual Effect", "Musik Video", "Konten Media Sosial"],
             software: ["Adobe Premiere Pro", "Adobe After Effects", "Capcut"],
@@ -255,11 +252,10 @@
           { 
             id: 3, 
             name: "Natan Izz Wardana", 
-            category: "FOUNDER", 
             skillGroup: ["Scriptwriter"], 
             image: "https://www.dropbox.com/scl/fi/gvn5h9h1bexlbwnadf4x4/tann.jpeg?rlkey=1qgwcfptiseyqh8gkxwzp8b9&st=ed9219ch&raw=1", 
             specialty: "Scriptwriter & Digital Director", 
-            about: "Natan memiliki peran krusial sebagai konseptor ide-ide menarik yang diadaptasi ke dalam narasi visual. Sebagai founder, ia juga memiliki pengalaman Directing yang kuat dalam ekosistem konten digital.",
+            about: "Natan memiliki peran krusial sebagai konseptor ide-ide menarik yang diadaptasi ke dalam narasi visual. Ia juga memiliki pengalaman Directing yang sangat kuat dalam ekosistem konten digital.",
             portfolioUrl: "#",
             experience: ["Film Pendek", "Mini Series"],
             software: ["Capcut"],
@@ -269,7 +265,6 @@
           { 
             id: 4, 
             name: "Faris Fadilah Nasir", 
-            category: "MEMBER", 
             skillGroup: ["Video & Motion", "3D & Graphic"], 
             image: "https://www.dropbox.com/scl/fi/rxuht7rb25pppud8j4agn/faris.JPEG?rlkey=3imekifkhx7nwf4xdwvm4fy0v&st=btplvubu&raw=1", 
             specialty: "3D Artist & Graphic Designer", 
@@ -338,7 +333,7 @@
 
         const GenericView = ({ title, subtitle, children }) => (
           <main className="pt-32 md:pt-48 pb-40 px-6 max-w-7xl mx-auto min-h-screen animate-in fade-in duration-1000">
-            <PageHeader title="title" subtitle="subtitle" />
+            <PageHeader title={title} subtitle={subtitle} />
             <div className="text-base md:text-xl text-gray-400 font-light leading-relaxed max-w-3xl border-l-2 border-red-600 pl-6 md:pl-8 reveal">
               {children}
             </div>
@@ -355,9 +350,8 @@
           const [selectedTalent, setSelectedTalent] = useState(null);
           const [isMenuOpen, setIsMenuOpen] = useState(false);
           const [activePersonilFilter, setActivePersonilFilter] = useState("Semua");
-          const [activeProjectModal, setActiveProjectModal] = useState(null); // State Modal Pop-up Portfolio
+          const [activeProjectModal, setActiveProjectModal] = useState(null);
 
-          // Menambahkan kategori filter baru "3D & Graphic"
           const personilFilters = ["Semua", "Video & Motion", "Scriptwriter", "Website Builder", "3D & Graphic"];
 
           useEffect(() => {
@@ -389,7 +383,6 @@
             setIsMenuOpen(false);
           };
 
-          // Memperbaiki filter pencarian agar mendukung format array multi-kategori (Fadlan & Faris muncul di beberapa filter)
           const filteredTalents = activePersonilFilter === "Semua" 
             ? TALENTS 
             : TALENTS.filter(t => t.skillGroup.includes(activePersonilFilter));
@@ -399,7 +392,7 @@
               case 'personil': 
                 return (
                   <main className="pt-32 md:pt-48 pb-40 px-6 max-w-7xl mx-auto min-h-screen animate-in fade-in duration-1000">
-                    <PageHeader title="PERSONIL KAMI." subtitle="HANASKAR_FOUNDERS" />
+                    <PageHeader title="PERSONIL KAMI." subtitle="HANASKAR_CREATIVE_COLLECTIVE" />
                     
                     <div className="reveal flex flex-wrap gap-3 md:gap-4 mb-16 px-4">
                         {personilFilters.map(filter => (
@@ -416,7 +409,7 @@
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
                       {filteredTalents.map((talent) => (
                         <div key={talent.id} className="reveal group cursor-pointer flex flex-col" onClick={() => { setSelectedTalent(talent); navigateTo('detail'); }}>
-                          {}
+                          {/* Image container without founder/member badge */}
                           <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900 border border-white/5 mb-6 md:mb-8 transition-all duration-500 group-hover:shadow-[0_20px_40px_-10px_rgba(220,38,38,0.3)]">
                             <img src={talent.image} alt={talent.name} className="w-full h-full object-cover opacity-100 group-hover:scale-105 transition-all duration-1000" />
                             <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-700 bg-white p-3 rounded-full text-black shadow-2xl scale-75 group-hover:scale-100"><Icon name="ArrowRight" size={18} /></div>
@@ -424,7 +417,7 @@
                           <div className="flex flex-col border-l-2 border-white/10 group-hover:border-red-600 pl-6 transition-all duration-500">
                             <h3 className="text-xl md:text-2xl font-black tracking-tighter uppercase mb-1 group-hover:text-red-600 transition-colors leading-none text-white">{talent.name}</h3>
                             
-                            {/* LOGIK DINAMIS UNTUK SUB-TEXT ROLE DI SETIAP FILTER */}
+                            {/* Dynamic subtext with role specialization for each filter */}
                             <p className="text-[8px] md:text-[10px] font-bold uppercase tracking-[0.4em] group-hover:text-gray-400 text-gray-600">
                               {talent.id === 1 ? (
                                 activePersonilFilter === "Video & Motion" ? "Video Editor & Motion Graphics Designer" :
@@ -450,7 +443,7 @@
                       HANASKAR.ID lahir dari visi kolektif tim inti di jurusan <strong>ANIMASI SMK</strong>. Perjalanan kami dimulai dari bangku sekolah, di mana kami tidak hanya belajar teknik, tetapi juga tumbuh bersama mengasah intuisi kreatif hingga mencapai bangku kelas 12.
                     </p>
                     <p>
-                      Masing-masing dari kami membawa keahlian unik sebagai jagoan di bidangnya—mulai dari <strong>Video Editing</strong> sinematik hingga <strong>Visual Design</strong> yang ikonik. Kami terus bertumbuh sesuai gairah dan keinginan kami dalam mengeksplorasi dunia media digital tanpa batas.
+                      Masing-masing dari kami membawa keahlian unik sebagai jagoan di bidangnya—mulai dari <strong>Video Editing</strong> sinematik hingga <strong>3D Art</strong> yang memukau. Kami terus bertumbuh sesuai gairah dan keinginan kami dalam mengeksplorasi dunia media digital tanpa batas.
                     </p>
                   </div>
                 </GenericView>
@@ -485,7 +478,6 @@
                                 </div>
                                 <div className="flex flex-col items-end">
                                     <span className="text-[8px] font-bold text-gray-600 uppercase tracking-widest mb-1">Status</span>
-                                    {/* Mengembalikan wadah kapsul kaca transparan yang melingkari status */}
                                     <div className="flex items-center gap-2 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
                                         <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
                                         <span className="text-[9px] font-black text-green-500 uppercase tracking-tighter">{selectedTalent.availability}</span>
@@ -538,7 +530,6 @@
                     <header className="relative w-full h-[100svh] flex flex-col justify-end overflow-hidden bg-black" id="hero">
                       {FEATURED_PROJECTS.map((proj, idx) => (
                         <div key={proj.id} className={`absolute inset-0 transition-all duration-1000 ease-in-out transform ${idx === currentSlide ? 'opacity-40 scale-100' : 'opacity-0 scale-110'}`}>
-                          {/* Rendering Video loops untuk Featured Project yang memiliki media video */}
                           {proj.video ? (
                             <video 
                               src={proj.video} 
@@ -554,6 +545,7 @@
                           <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-90"></div>
                         </div>
                       ))}
+                      {}
                       <div className="flex-1 flex flex-col justify-center max-w-7xl mx-auto w-full px-6 md:px-8 relative z-10 pt-20">
                         <div className="animate-in fade-in duration-1000">
                           <div className="flex flex-row items-center mb-4 overflow-visible py-2"><h1 className="text-5xl sm:text-7xl md:text-[11vw] font-black tracking-tighter uppercase leading-[0.8] italic flex whitespace-nowrap"><span className="text-white animate-slide-right">HANA</span><span className="text-transparent animate-draw-stroke ml-[-2px] md:ml-[-5px]" style={{ WebkitTextStroke: "1px #dc2626" }}>SKAR.</span></h1></div>
@@ -584,6 +576,7 @@
                     </header>
                     
                     {/* GALERI PROYEK */}
+                    {}
                     <section className="bg-black py-24 md:py-40 px-6">
                       <div className="max-w-7xl mx-auto">
                          <div className="reveal mb-20 text-center md:text-left"><span className="text-red-600 font-mono text-[11px] font-bold tracking-[0.6em] mb-4 block uppercase">// FEATURED_GALLERY</span><h2 className="text-4xl md:text-[7vw] font-black tracking-tighter uppercase leading-[0.9]">KARYA <br /> <span className="text-transparent italic" style={{ WebkitTextStroke: "1px white" }}>TERBAIK KAMI.</span></h2></div>
@@ -591,10 +584,6 @@
                             {PORTFOLIO_WORKS.map((work) => {
                               return (
                                 <div key={work.id} onClick={() => setActiveProjectModal(work)} className="reveal relative aspect-[4/3] overflow-hidden group cursor-pointer rounded-sm bg-zinc-950 border border-white/5 shadow-2xl">
-                                    {/* === CUSTOM TYPOGRAPHY THUMBNAIL UNTUK SELURUH KARTU ===
-                                       Sesuai request: Sekarang diterapkan ke semua item portofolio.
-                                       Normal State (Biasa Aja): Minimalis abu-abu, bernuansa gelap elegan dengan nama projek.
-                                    */}
                                     <div className="w-full h-full flex flex-col items-center justify-center bg-[#0d0d0d] p-6 transition-all duration-700 group-hover:bg-black">
                                         <span className="text-[8px] md:text-[9px] font-bold tracking-[0.4em] text-zinc-600 mb-3">// {work.category.toUpperCase()}</span>
                                         <h3 className="text-xl md:text-2xl font-black tracking-tighter uppercase text-center text-zinc-500 transition-colors duration-500 italic max-w-xs leading-none">
@@ -603,9 +592,6 @@
                                         <div className="mt-4 w-8 h-[2px] bg-zinc-800 transition-all duration-500 group-hover:bg-red-600 group-hover:w-16"></div>
                                     </div>
                                     
-                                    {/* === HOVER OVERLAY SLIDE-UP RED ===
-                                       Saat di-select/hover: Meluncur ke atas berwarna merah solid, tulisan putih kontras.
-                                    */}
                                     <div className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex flex-col items-center justify-center p-6 md:p-12 text-center bg-red-600 text-white">
                                         <span className="text-[8px] md:text-[10px] font-black tracking-[0.3em] uppercase mb-2 md:mb-4 text-white/80">{work.category}</span>
                                         <h3 className="text-xl md:text-2xl font-black tracking-tighter uppercase mb-1 md:mb-2 leading-tight">{work.title}</h3>
@@ -630,6 +616,7 @@
           return (
             <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-red-600 relative overflow-x-hidden">
               <div className="fixed inset-0 pointer-events-none z-[200] opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
+              {}
               <nav className={`fixed top-0 w-full z-[150] transition-all duration-700 transform ${scrolled || view !== 'home' ? 'translate-y-0 opacity-100 bg-black/95 py-3 md:py-5 border-b border-white/10 shadow-2xl' : 'translate-y-[-100%] opacity-0 pointer-events-none'}`}>
                 <div className="max-w-7xl mx-auto px-6 md:px-8 flex justify-between items-center h-12 md:h-10">
                   <div className="flex items-center cursor-pointer" onClick={() => navigateTo('home')}><h1 className="text-base md:text-xl font-black uppercase tracking-tighter italic flex"><span className="text-white">HANA</span><span className="text-transparent" style={{ WebkitTextStroke: "1px #dc2626" }}>SKAR.</span></h1><span className="text-[10px] md:text-sm font-light italic ml-2 tracking-[0.2em] uppercase text-gray-500">PROJECT</span></div>
@@ -645,7 +632,6 @@
               {activeProjectModal && (
                 <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 md:p-10 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
                   <div className="relative w-full max-w-5xl bg-zinc-950 border border-white/10 rounded-sm overflow-hidden flex flex-col lg:flex-row max-h-[90vh] md:max-h-[80vh] shadow-2xl">
-                    {/* Tombol Tutup */}
                     <button 
                       onClick={() => setActiveProjectModal(null)} 
                       className="absolute top-4 right-4 z-50 bg-black/60 hover:bg-red-600 text-white p-2 rounded-full border border-white/10 transition-colors"
@@ -653,7 +639,6 @@
                       <Icon name="X" size={20} />
                     </button>
 
-                    {/* Sisi Kiri: Media Pemutar Video atau Gambar */}
                     <div className="w-full lg:w-3/5 bg-black aspect-video lg:aspect-auto lg:min-h-[500px] flex items-center justify-center overflow-hidden">
                       {activeProjectModal.video ? (
                         <video 
@@ -671,7 +656,6 @@
                       )}
                     </div>
 
-                    {/* Sisi Kanan: Detail Deskripsi Project */}
                     <div className="w-full lg:w-2/5 p-6 md:p-10 flex flex-col justify-between overflow-y-auto bg-zinc-950">
                       <div className="space-y-6">
                         <div>
@@ -698,6 +682,7 @@
                 </div>
               )}
 
+              {}
               <footer className="bg-black pt-20 md:pt-32 pb-16 px-6 border-t border-white/5 reveal">
                 <div className="max-w-7xl mx-auto text-center md:text-left">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16 mb-20 text-white">

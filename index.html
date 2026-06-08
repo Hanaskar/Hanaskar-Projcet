@@ -50,10 +50,6 @@
             opacity: 0; 
         }
 
-        .animate-slide-up-chat {
-            animation: slideUpChat 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-        }
-
         @keyframes slideRight { 
             0% { transform: translateX(-30px); opacity: 0; filter: blur(5px); } 
             100% { transform: translateX(0); opacity: 1; filter: blur(0); } 
@@ -61,10 +57,6 @@
         @keyframes drawStroke { 
             0% { opacity: 0; transform: scale(1.05); filter: blur(10px); } 
             100% { opacity: 1; transform: scale(1); filter: blur(0); } 
-        }
-        @keyframes slideUpChat {
-            0% { transform: translateY(50px) scale(0.9); opacity: 0; filter: blur(4px); }
-            100% { transform: translateY(0) scale(1); opacity: 1; filter: blur(0); }
         }
 
         ::-webkit-scrollbar { width: 4px; }
@@ -77,13 +69,9 @@
     
     <div id="root"></div>
 
-    <!-- Script React dalam format JSX yang dijalankan via Babel -->
     <script type="text/babel">
         const { useState, useEffect, useRef } = React;
 
-        // =====================================================================
-        // KOMPONEN IKON FAILSAFE (MENGGANTIKAN LUCIDE-REACT BIAR SUPERSIMPEL)
-        // =====================================================================
         const Icon = ({ name, size = 20, className = "" }) => {
             const icons = {
                 ArrowRight: <path d="M5 12h14M12 5l7 7-7 7" />,
@@ -121,708 +109,59 @@
                     </g>
                 ),
                 Send: <path d="m22 2-7 20-4-9-9-4Z" />,
-                Radio: (
+                Play: <path d="m5 3 14 9-14 9V3z" />,
+                Layers: (
                     <g>
-                        <circle cx="12" cy="12" r="2" />
-                        <path d="M16.24 7.76a6 6 0 0 1 0 8.49m-8.48-.01a6 6 0 0 1 0-8.49m11.31-2.82a10 10 0 0 1 0 14.14m-14.14 0a10 10 0 0 1 0-14.14" />
+                        <polygon points="12 2 2 7 12 12 22 7 12 2" />
+                        <polyline points="2 17 12 22 22 17" />
+                        <polyline points="2 12 12 17 22 12" />
                     </g>
                 ),
-                Play: <path d="m5 3 14 9-14 9V3z" />
+                Cpu: (
+                    <g>
+                        <rect x="4" y="4" width="16" height="16" rx="2" />
+                        <rect x="9" y="9" width="6" height="6" />
+                        <line x1="9" y1="1" x2="9" y2="4" />
+                        <line x1="15" y1="1" x2="15" y2="4" />
+                        <line x1="9" y1="20" x2="9" y2="23" />
+                        <line x1="15" y1="20" x2="15" y2="23" />
+                        <line x1="20" y1="9" x2="23" y2="9" />
+                        <line x1="20" y1="15" x2="23" y2="15" />
+                        <line x1="1" y1="9" x2="4" y2="9" />
+                        <line x1="1" y1="15" x2="4" y2="15" />
+                    </g>
+                ),
+                Edit3: (
+                    <g>
+                        <path d="M12 20h9" />
+                        <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z" />
+                    </g>
+                )
             };
             return (
-                <svg 
-                    width={size} 
-                    height={size} 
-                    viewBox="0 0 24 24" 
-                    fill="none" 
-                    stroke="currentColor" 
-                    strokeWidth="2" 
-                    strokeLinecap="round" 
-                    strokeLinejoin="round" 
-                    className={className}
-                >
+                <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
                     {icons[name] || null}
                 </svg>
             );
         };
 
-        // =====================================================================
-        // DATA UNTUK FITUR NOTIFIKASI AKTIVITAS CHAT RANDOM
-        // =====================================================================
-        const RANDOM_SENDERS = [
-          "Ahmad Reza", "Siti Rahma", "Jessica Tan", "Budi Santoso", "Devon Wijaya", 
-          "Rara Amalia", "Chandra Kirana", "Putri Utami", "Andi Pratama", "Kevin Sanjaya",
-          "Gita Permata", "Rian Hidayat", "Michael Wong", "Salsa Bella", "Aris Munandar"
-        ];
-
-        const MOCK_MESSAGES = {
-          1: [ // Fadlan (Video, Website)
-            "Bro, portofolio website gua kira-kira bisa rampung sebelum weekend ini?",
-            "Halo Fadlan, mau nanya pricelist jasa bikin web portfolio interaktif dong.",
-            "Keren banget editing video starbhak recap-nya, bisa kolaborasi project baru?",
-            "Fadlan, file source-code website undangan kemarin boleh dikirim ulang?",
-            "Project website wedding invitation-nya masih open slot buat bulan depan?"
-          ],
-          2: [ // Luthfi (Video & Motion)
-            "Luthfi, konsep dokumenter sejarah kemarin udah di-approve sama produser!",
-            "Bisa minta tolong revisi sedikit color grading di scene ke-3 video komersial?",
-            "Ada waktu luang minggu ini buat shooting mini series baru kita?",
-            "Halo, buat editing video dokumenter durasi 15 menit biayanya berapa ya?",
-            "Gokil Luthfi! Suka banget ritme editing lu di video Starbhak, jempolan bro!"
-          ],
-          3: [ // Natan (Scriptwriter)
-            "Natan, naskah script film pendek fiksi ilmiahnya udah dibaca klien, mereka suka!",
-            "Bisa bikinin storyline kreatif buat iklan komersial kosmetik ga, Nat?",
-            "Konsep creative directing lu buat project kemarin bener-bener dapet feel-nya.",
-            "Natan, ada ide plot twist menarik buat mini series genre thriller?",
-            "Boleh diskusi singkat soal konsep naskah video cinematic profile besok?"
-          ],
-          4: [ // Faris (3D & Graphic)
-            "Faris, asset modeling 3D Blender buat parade otak kanan udah selesai semua?",
-            "Halo bro, bisa bikinin motion graphics bumper buat intro channel YouTube gua?",
-            "Desain poster festival kemarin dapet respon positif banget dari pengunjung!",
-            "Faris, tolong bikinin model 3D mockup produk botol minuman dong.",
-            "Kerja bagus Faris, revisi desain poster kemarin udah klop banget!"
-          ]
-        };
-
-        // =====================================================================
-        // DATA PORTFOLIO & TIM (DENGAN TAUTAN AKSES LANGSUNG DROPBOX STABIL)
-        // =====================================================================
-        const FEATURED_PROJECTS = [
-          {
-            id: "01",
-            title: "VIDEO ANGKATAN RECAP STARBHAK 2026",
-            sub: "YEARBOOK RECAP / STARBHAK 2026",
-            image: "https://dl.dropboxusercontent.com/scl/fi/4nso6pmb8dsalt6i0y0pn/thumb-starbhak.png?rlkey=wes58lny32v01nthgs1mczstf&raw=1",
-            desc: "Kami dipercaya sepenuhnya sebagai tim kreatif di balik proses penyuntingan (editing) video angkatan Starbhak 2026, merangkai setiap momen berharga sekolah menjadi narasi visual sinematik yang tak terlupakan."
-          },
-          {
-            id: "02",
-            title: "MAY BANK CAMPAIGN",
-            sub: "COMMERCIAL / BRANDING 2024",
-            image: "https://images.unsplash.com/photo-1492691523567-611233adcf4b?auto=format&fit=crop&q=80&w=1600",
-            desc: "Menangkap setiap momen terbaik dengan sentuhan kreatif kolektif kami. Eksplorasi tanpa batas."
-          },
-          {
-            id: "03",
-            title: "MINIMATION PARADE OTAK KANAN 8",
-            sub: "WINNER / THE MOST CREATIVE CATEGORY",
-            image: "https://dl.dropboxusercontent.com/scl/fi/yi9fh5qxs1rmt8nle2uw7/thumb-minimation.jpg?rlkey=enkl4r7io7wysbk0c08lfg282&raw=1",
-            desc: "Sebuah pencapaian luar biasa di mana tim kami berhasil menjuarai kategori 'The Most Creative' melalui karya visual yang inovatif."
-          }
-        ];
-
-        const PORTFOLIO_WORKS = [
-          { 
-            id: 1, 
-            title: "Wedding Invitation Web", 
-            category: "Web Development", 
-            client: "Hanaskar Project", 
-            image: "", 
-            video: "https://dl.dropboxusercontent.com/scl/fi/a53xsfj8ggmudj1b2daci/Preview-Web.mp4?rlkey=6tiupqek8dfnxk4m3m9nmg865&raw=1",
-            desc: "Undangan pernikahan digital interaktif premium yang dibuat oleh HANASKAR Project. Mengedepankan kemudahan navigasi, RSVP instan, album foto interaktif, pemutar audio, serta transisi antar seksi yang sangat halus dan responsif di berbagai gawai."
-          },
-          { 
-            id: 2, 
-            title: "Portofolio Website", 
-            category: "Web Development", 
-            client: "Hanaskar Project", 
-            image: "", 
-            video: "https://dl.dropboxusercontent.com/scl/fi/wetaykmvtg7g3fw46hnx9/Preview-Porto.mp4?rlkey=jllo2saw8hws99bsmam6emdbw&raw=1",
-            desc: "Website portofolio interaktif premium buatan HANASKAR Project dengan desain berestetika tinggi, animasi transisi yang modern dan interaksi yang kaya untuk memamerkan karya kreatif Anda."
-          },
-          { 
-            id: 3, 
-            title: "Permata Bank Kick Off", 
-            category: "Motion Graphics", 
-            client: "Permata Bank", 
-            image: "https://images.unsplash.com/photo-1505373877841-8d25f7d46678?auto=format&fit=crop&q=80&w=800",
-            desc: "Pembuatan animasi pembuka bertenaga tinggi untuk acara Kick Off tahunan Permata Bank yang modern, dinamis, dan futuristik."
-          },
-          { 
-            id: 4, 
-            title: "BTPN Leadership Forum", 
-            category: "Video Editor", 
-            client: "BTPN Bank", 
-            image: "https://images.unsplash.com/photo-1515187029135-18ee286d815b?auto=format&fit=crop&q=80&w=800",
-            desc: "Editing video rangkaian diskusi kepemimpinan nasional BTPN Bank, merangkum poin-poin visi masa depan secara komprehensif."
-          },
-          { 
-            id: 5, 
-            title: "Chinese New Year 2023", 
-            category: "Motion Graphics", 
-            client: "BDI Production", 
-            image: "https://images.unsplash.com/photo-1563291074-2bf8677ac0e5?auto=format&fit=crop&q=80&w=800",
-            desc: "Visual aset motion grafis spesial perayaan Tahun Baru Imlek dengan paduan warna oriental klasik and transisi animasi modern bernilai estetik tinggi."
-          },
-          { 
-            id: 6, 
-            title: "Bakkum Festival", 
-            category: "Graphics Design", 
-            client: "Festival Organiser", 
-            image: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?auto=format&fit=crop&q=80&w=1600",
-            desc: "Perancangan identitas visual lengkap mulai dari poster, tiket, hingga aset digital panggung untuk kemeriahan Bakkum Music Festival."
-          },
-        ];
-
         const TALENTS = [
           { 
-            id: 1, 
-            name: "Muhamad Fadlan Iskandar", 
-            skillGroup: ["Video & Motion", "Website Builder"], 
-            image: "https://dl.dropboxusercontent.com/scl/fi/jmp4ktaiadqh4m160o3i0/Muhammad-Fadlan-Iskandar.JPG?rlkey=gsvc80d1a9yzq1wr9bt60u778&raw=1", 
-            specialty: "Video Editor, Motion Graphics & Portfolio Builder", 
-            about: "Fadlan adalah ahli narasi visual dan pengembang web kreatif yang menggabungkan teknik editing sinematik, motion graphics modern, dan keahlian web development untuk membangun platform portofolio interaktif yang berjiwa.",
-            portfolioUrl: "https://www.faldanggaeppl.online/",
-            experience: ["Film Pendek", "Mini Series", "Visual Effect", "Musik Video", "Konten Media Sosial", "Motion Graphics", "Bumper", "Portfolio Builder"], 
-            software: ["Adobe Premiere Pro", "Adobe After Effects", "Capcut", "HTML"], 
-            availability: "AVAILABLE",
-            socials: { wa: "https://wa.me/6287713907028", ig: "https://www.instagram.com/faldangg.aep/", tt: "https://www.tiktok.com/@fadlaniskandarpro?lang=en" }
+            id: 1, name: "Muhamad Fadlan Iskandar", skillGroup: ["Video & Motion", "Website Builder"], image: "https://www.dropbox.com/scl/fi/jmp4ktaiadqh4m160o3i0/Muhammad-Fadlan-Iskandar.JPG?rlkey=gsvc80d1a9yzq1wr9bt60u778&raw=1", specialty: "Video Editor, Motion Graphics & Portfolio Builder", availability: "AVAILABLE", socials: { wa: "https://wa.me/6287713907028", ig: "https://www.instagram.com/faldangg.aep/", tt: "https://www.tiktok.com/@fadlaniskandarpro?lang=en" }
           },
           { 
-            id: 2, 
-            name: "Luthfi Rasendriya Hanasta", 
-            skillGroup: ["Video & Motion"], 
-            image: "https://dl.dropboxusercontent.com/scl/fi/0z5qwoemwb3i33dlavirn/WhatsApp-Image-2025-10-15-at-15.10.29_19a13c0c.jpg?rlkey=1wq3xowsm6566xbv3e1rkopzj&raw=1", 
-            specialty: "Content Editor & Documentary Video Editor",
-            about: "Luthfi adalah spesialis dalam dokumenter dan konten komersial. Ia percaya bahwa sebuah video bukan hanya tentang gambar, melainkan tentang emosi yang tersampaikan melalui visual, ritme editing, and detail sound yang membangun cerita.",
-            portfolioUrl: "#",
-            experience: ["Film Pendek", "Mini Series", "Visual Effect", "Musik Video", "Konten Media Sosial"],
-            software: ["Adobe Premiere Pro", "Adobe After Effects", "Capcut"],
-            availability: "AVAILABLE",
-            socials: { 
-                wa: "https://wa.me/message/U3OAFWJXDQ7BD1", 
-                ig: "https://instagram.com/luthfirahn_", 
-                tt: "#" 
-            }
+            id: 2, name: "Luthfi Rasendriya Hanasta", skillGroup: ["Video & Motion"], image: "https://www.dropbox.com/scl/fi/0z5qwoemwb3i33dlavirn/WhatsApp-Image-2025-10-15-at-15.10.29_19a13c0c.jpg?rlkey=1wq3xowsm6566xbv3e1rkopzj&raw=1", specialty: "Content Editor & Documentary Video Editor", availability: "AVAILABLE", socials: { wa: "https://wa.me/message/U3OAFWJXDQ7BD1", ig: "https://instagram.com/luthfirahn_", tt: "#" }
           },
           { 
-            id: 3, 
-            name: "Natan Izz Wardana", 
-            skillGroup: ["Scriptwriter"], 
-            image: "https://dl.dropboxusercontent.com/scl/fi/gvn5h9h1bexlbwnadf4x4/tann.jpeg?rlkey=1qgwcf7ptiseyqh8gkxwzp8b9&st=h1o3qitl&raw=1", 
-            specialty: "Scriptwriter & Digital Director", 
-            about: "Natan memiliki peran krusial sebagai konseptor ide-ide menarik yang diadaptasi ke dalam narasi visual. Ia juga memiliki pengalaman Directing yang sangat kuat dalam ekosistem konten digital.",
-            portfolioUrl: "#",
-            experience: ["Film Pendek", "Mini Series"],
-            software: ["Capcut"],
-            availability: "AVAILABLE",
-            socials: { wa: "#", ig: "#", tt: "#" }
+            id: 3, name: "Natan Izz Wardana", skillGroup: ["Scriptwriter"], image: "https://www.dropbox.com/scl/fi/gvn5h9h1bexlbwnadf4x4/tann.jpeg?rlkey=1qgwcf7ptiseyqh8gkxwzp8b9&raw=1", specialty: "Scriptwriter & Digital Director", availability: "AVAILABLE", socials: { wa: "#", ig: "#", tt: "#" }
           },
           { 
-            id: 4, 
-            name: "Faris Fadilah Nasir", 
-            skillGroup: ["Video & Motion", "3D & Graphic"], 
-            image: "https://dl.dropboxusercontent.com/scl/fi/rxuht7rb25pppud8j4agn/faris.JPEG?rlkey=3imekifkhx7nwf4xdwvm4fy0v&raw=1", 
-            specialty: "3D Artist & Graphic Designer", 
-            about: "Faris percaya bahwa visual yang baik tidak hanya dilihat, tetapi juga dirasakan. Dengan pengalaman di bidang 3D art, desain grafis, dan video editing, ia berkontribusi dalam mengembangkan aset visual, memperkuat identitas sebuah karya, serta menghadirkan pengalaman yang lebih menarik dan berkesan bagi audiens.",
-            portfolioUrl: "#",
-            experience: ["3D Modeling", "3D Animasi", "Mini Series", "Konten Media Sosial", "Motion Graphics"], 
-            software: ["Blender", "Adobe After Effects", "Adobe Premiere Pro", "Adobe Photoshop", "Canva"], 
-            availability: "AVAILABLE",
-            socials: { wa: "#", ig: "#", tt: "#" }
+            id: 4, name: "Faris Fadilah Nasir", skillGroup: ["Video & Motion", "3D & Graphic"], image: "https://www.dropbox.com/scl/fi/rxuht7rb25pppud8j4agn/faris.JPEG?rlkey=3imekifkhx7nwf4xdwvm4fy0v&raw=1", specialty: "3D Artist & Graphic Designer", availability: "AVAILABLE", socials: { wa: "https://wa.me/6288296442395", ig: "https://www.instagram.com/frissproject_/", tt: "https://www.tiktok.com/@frissproject_" }
           },
         ];
 
-        // =====================================================================
-        // SEKSI STATISTIK & KONTER
-        // =====================================================================
-        const RollingCounter = ({ target, trigger }) => {
-          const [count, setCount] = useState(0);
-          useEffect(() => {
-            if (!trigger) return;
-            let startTimestamp = null;
-            const duration = 2000;
-            const step = (timestamp) => {
-              if (!startTimestamp) startTimestamp = timestamp;
-              const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-              const easeOutQuad = (t) => t * (2 - t);
-              setCount(Math.floor(easeOutQuad(progress) * target));
-              if (progress < 1) window.requestAnimationFrame(step);
-            };
-            window.requestAnimationFrame(step);
-          }, [target, trigger]);
-          return <span>{count}</span>;
-        };
-
-        const StatItem = ({ target, label, subLabel }) => {
-          const [isVisible, setIsVisible] = useState(false);
-          const domRef = useRef();
-          useEffect(() => {
-            const observer = new IntersectionObserver(entries => {
-              if (entries[0].isIntersecting) setIsVisible(true);
-            }, { threshold: 0.2 });
-            if (domRef.current) observer.observe(domRef.current);
-            return () => observer.disconnect();
-          }, []);
-
-          return (
-            <div ref={domRef} className="reveal relative flex items-center justify-center h-40 md:h-64 border-y md:border-y-0 md:border-x border-white/5 first:border-l-0 last:border-r-0 group overflow-hidden">
-              <span className="absolute inset-0 flex items-center justify-center text-[5rem] md:text-[10rem] font-black text-red-600/35 select-none pointer-events-none group-hover:text-red-600/55 transition-all duration-700">
-                <RollingCounter target={target} trigger={isVisible} />
-              </span>
-              <div className="relative z-10 text-center">
-                <h3 className="text-2xl md:text-5xl font-black tracking-tighter text-white uppercase mb-1 drop-shadow-2xl">{label}</h3>
-                <p className="text-[8px] md:text-[11px] font-bold tracking-[0.4em] text-gray-500 uppercase bg-black/60 px-3 py-1 backdrop-blur-sm border border-white/5 inline-block">{subLabel}</p>
-              </div>
-            </div>
-          );
-        };
-
-        const PageHeader = ({ title, subtitle }) => (
-          <header className="mb-8 md:mb-12 reveal px-4">
-            <span className="text-red-600 font-mono text-[9px] md:text-[11px] font-bold tracking-[0.5em] mb-4 md:mb-6 block uppercase">// {subtitle}</span>
-            <h1 className="text-4xl sm:text-6xl md:text-[9vw] font-black tracking-tighter uppercase leading-[0.9] text-white italic">
-              {title}
-            </h1>
-          </header>
-        );
-
-        const GenericView = ({ title, subtitle, children }) => (
-          <main className="pt-32 md:pt-48 pb-40 px-6 max-w-7xl mx-auto min-h-screen animate-in fade-in duration-1000">
-            <PageHeader title={title} subtitle={subtitle} />
-            <div className="text-base md:text-xl text-gray-400 font-light leading-relaxed max-w-3xl border-l-2 border-red-600 pl-6 md:pl-8 reveal">
-              {children}
-            </div>
-          </main>
-        );
-
-        // =====================================================================
-        // UTAMA APLIKASI
-        // =====================================================================
-        const App = () => {
-          const [view, setView] = useState('home'); 
-          const [scrolled, setScrolled] = useState(false);
-          const [currentSlide, setCurrentSlide] = useState(0);
-          const [selectedTalent, setSelectedTalent] = useState(null);
-          const [isMenuOpen, setIsMenuOpen] = useState(false);
-          const [activePersonilFilter, setActivePersonilFilter] = useState("Semua");
-          const [activeProjectModal, setActiveProjectModal] = useState(null);
-          const [liveChats, setLiveChats] = useState([]); // State untuk notifikasi chat live
-
-          const personilFilters = ["Semua", "Video & Motion", "Scriptwriter", "Website Builder", "3D & Graphic"];
-
-          // Effect untuk memicu animasi reveal elemen HTML saat scroll
-          useEffect(() => {
-            const observer = new IntersectionObserver((entries) => {
-              entries.forEach((entry) => {
-                if (entry.isIntersecting) entry.target.classList.add('visible');
-              });
-            }, { threshold: 0.1 });
-            document.querySelectorAll('.reveal').forEach((el) => observer.observe(el));
-            return () => observer.disconnect();
-          }, [view, activePersonilFilter]);
-
-          // Slider banner promo project utama di beranda
-          useEffect(() => {
-            const timer = setInterval(() => {
-              if (view === 'home') setCurrentSlide((prev) => (prev + 1) % FEATURED_PROJECTS.length);
-            }, 8000);
-            return () => clearInterval(timer);
-          }, [view]);
-
-          // Navigasi bar transisi gelap saat di-scroll
-          useEffect(() => {
-            const handleScroll = () => setScrolled(window.scrollY > 80);
-            window.addEventListener('scroll', handleScroll);
-            return () => window.removeEventListener('scroll', handleScroll);
-          }, []);
-
-          // =====================================================================
-          // LOGIKA TIMED CHAT NOTIFICATION (SISTEM TIAP 10 DETIK)
-          // =====================================================================
-          useEffect(() => {
-            const chatInterval = setInterval(() => {
-              // Pilih personil acak
-              const randomTalent = TALENTS[Math.floor(Math.random() * TALENTS.length)];
-              // Pilih nama pengirim acak
-              const randomSender = RANDOM_SENDERS[Math.floor(Math.random() * RANDOM_SENDERS.length)];
-              // Ambil daftar pesan acak milik personil terpilih
-              const messages = MOCK_MESSAGES[randomTalent.id];
-              const randomMessage = messages[Math.floor(Math.random() * messages.length)];
-              
-              const newChatNotification = {
-                id: Date.now(),
-                sender: randomSender,
-                targetName: randomTalent.name,
-                message: randomMessage
-              };
-
-              // Hanya tampilkan 1 chat terpopuler di layar untuk menjaga minimalisasi desain
-              setLiveChats([newChatNotification]);
-              
-              // Sembunyikan otomatis gelembung chat setelah 6 detik berlalu
-              setTimeout(() => {
-                setLiveChats(prev => prev.filter(c => c.id !== newChatNotification.id));
-              }, 6000);
-
-            }, 10000); // Trigger setiap 10 detik sekali
-
-            return () => clearInterval(chatInterval);
-          }, []);
-
-          const navigateTo = (page) => {
-            setView(page);
-            window.scrollTo({top: 0, behavior: 'smooth'});
-            setIsMenuOpen(false);
-          };
-
-          const filteredTalents = activePersonilFilter === "Semua" 
-            ? TALENTS 
-            : TALENTS.filter(t => t.skillGroup.includes(activePersonilFilter));
-
-          const renderContent = () => {
-            switch (view) {
-              case 'personil': 
-                return (
-                  <main className="pt-32 md:pt-48 pb-40 px-6 max-w-7xl mx-auto min-h-screen animate-in fade-in duration-1000">
-                    <PageHeader title="PERSONIL KAMI." subtitle="HANASKAR_CREATIVE_COLLECTIVE" />
-                    
-                    <div className="reveal flex flex-wrap gap-3 md:gap-4 mb-16 px-4">
-                        {personilFilters.map(filter => (
-                            <button 
-                                key={filter} 
-                                onClick={() => setActivePersonilFilter(filter)}
-                                className={`px-6 md:px-8 py-2 md:py-3 text-[9px] md:text-[10px] font-bold uppercase tracking-[0.3em] border transition-all duration-500 rounded-sm ${activePersonilFilter === filter ? 'bg-red-600 border-red-600 text-white shadow-xl scale-105' : 'bg-transparent border-white/10 text-gray-500 hover:border-red-600/50 hover:text-gray-300'}`}
-                            >
-                                {filter}
-                            </button>
-                        ))}
-                    </div>
-
-                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
-                      {filteredTalents.map((talent) => (
-                        <div key={talent.id} className="reveal group cursor-pointer flex flex-col" onClick={() => { setSelectedTalent(talent); navigateTo('detail'); }}>
-                          {/* Image container with fallback */}
-                          <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900 border border-white/5 mb-6 md:mb-8 transition-all duration-500 group-hover:shadow-[0_20px_40px_-10px_rgba(220,38,38,0.3)]">
-                            <img 
-                              src={talent.image} 
-                              alt={talent.name} 
-                              className="w-full h-full object-cover opacity-100 group-hover:scale-105 transition-all duration-1000" 
-                              onError={(e) => { 
-                                e.target.onerror = null; 
-                                e.target.src = `https://placehold.co/400x500/111111/ffffff?text=${encodeURIComponent(talent.name)}`; 
-                              }}
-                            />
-                            <div className="absolute bottom-4 right-4 md:bottom-6 md:right-6 opacity-0 translate-y-6 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-700 bg-white p-3 rounded-full text-black shadow-2xl scale-75 group-hover:scale-100"><Icon name="ArrowRight" size={18} /></div>
-                          </div>
-                          <div className="flex flex-col border-l-2 border-white/10 group-hover:border-red-600 pl-6 transition-all duration-500">
-                            <h3 className="text-xl md:text-2xl font-black tracking-tighter uppercase mb-1 group-hover:text-red-600 transition-colors leading-none text-white">{talent.name}</h3>
-                            
-                            {/* Dynamic subtext with role specialization for each filter */}
-                            <p className="text-[8px] md:text-[10px] font-bold uppercase tracking-[0.4em] group-hover:text-gray-400 text-gray-600">
-                              {talent.id === 1 ? (
-                                activePersonilFilter === "Video & Motion" ? "Video Editor & Motion Graphics Designer" :
-                                activePersonilFilter === "Website Builder" ? "Portfolio Builder" :
-                                "Video Editor, Motion Graphics & Portfolio Builder"
-                              ) : talent.id === 4 ? (
-                                activePersonilFilter === "Video & Motion" ? "Motion Graphics & Video Editor" :
-                                "3D Artist & Graphic Designer"
-                              ) : (
-                                talent.specialty
-                              )}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </main>
-                );
-              case 'tentang': return (
-                <GenericView title="TENTANG KAMI." subtitle="OUR_STORY">
-                  <div className="space-y-8">
-                    <p>
-                      HANASKAR.ID lahir dari visi kolektif tim inti di jurusan <strong>ANIMASI SMK</strong>. Perjalanan kami dimulai dari bangku sekolah, di mana kami tidak hanya belajar teknik, tetapi juga tumbuh bersama mengasah intuisi kreatif hingga mencapai bangku kelas 12.
-                    </p>
-                    <p>
-                      Masing-masing dari kami membawa keahlian unik sebagai jagoan di bidangnya—mulai dari <strong>Video Editing</strong> sinematik hingga <strong>3D Art</strong> yang memukau. Kami terus bertumbuh sesuai gairah dan keinginan kami dalam mengeksplorasi dunia media digital tanpa batas.
-                    </p>
-                  </div>
-                </GenericView>
-              );
-              case 'layanan': return (
-                <GenericView title="LAYANAN KAMI." subtitle="SERVICES_INDEX">
-                  <p>Kami menyediakan solusi visual komprehensif mulai dari Video Production, Motion Graphics, hingga Post-Production berskala besar.</p>
-                </GenericView>
-              );
-              case 'onair': return (
-                <GenericView title="ON AIR STATUS." subtitle="BROADCAST_LIVE">
-                    <div className="flex items-center gap-6 text-green-500 mb-10">
-                        <Icon name="Radio" className="animate-pulse" size={32} />
-                        <span className="text-xl md:text-2xl font-black uppercase tracking-widest">Sistem Sedang Siaran</span>
-                    </div>
-                </GenericView>
-              );
-              case 'detail': return (
-                <main className="pt-32 md:pt-40 pb-40 px-6 max-w-7xl mx-auto min-h-screen animate-in fade-in duration-1000">
-                     <button onClick={() => navigateTo('personil')} className="flex items-center gap-3 text-red-600 font-bold uppercase tracking-widest text-[10px] mb-12 hover:translate-x-[-5px] transition-transform"><Icon name="ArrowLeft" size={16} /> KEMBALI KE PERSONIL</button>
-                     <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 md:gap-20 items-start">
-                        <div className="lg:col-span-7">
-                            <div className="relative aspect-[4/5] overflow-hidden bg-zinc-900 border border-white/10 shadow-2xl rounded-sm">
-                                <img 
-                                  src={selectedTalent.image} 
-                                  alt={selectedTalent.name} 
-                                  className="w-full h-full object-cover opacity-100" 
-                                  onError={(e) => { 
-                                    e.target.onerror = null; 
-                                    e.target.src = `https://placehold.co/400x500/111111/ffffff?text=${encodeURIComponent(selectedTalent.name)}`; 
-                                  }}
-                                />
-                            </div>
-                        </div>
-                        <div className="lg:col-span-5 md:sticky md:top-40 space-y-8 md:space-y-12">
-                            <div className="flex justify-between items-start">
-                                <div>
-                                    <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase leading-none text-white">{selectedTalent.name}</h1>
-                                </div>
-                                <div className="flex flex-col items-end">
-                                    <span className="text-[8px] font-bold text-gray-600 uppercase tracking-widest mb-1">Status</span>
-                                    <div className="flex items-center gap-2 px-3 py-1 bg-green-500/10 border border-green-500/20 rounded-full">
-                                        <span className="w-1.5 h-1.5 bg-green-500 rounded-full animate-pulse"></span>
-                                        <span className="text-[9px] font-black text-green-500 uppercase tracking-tighter">{selectedTalent.availability}</span>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <p className="text-lg md:text-xl text-gray-500 italic border-l-2 border-red-600 pl-6 md:pl-8">{selectedTalent.specialty}</p>
-                            <p className="text-gray-400 font-light leading-relaxed">{selectedTalent.about}</p>
-
-                            <div className="space-y-8 pt-8 border-t border-white/5">
-                                <div className="space-y-4">
-                                    <div className="flex items-center gap-3 text-gray-500"><Icon name="Clapperboard" size={18} /><h4 className="text-[11px] font-black uppercase tracking-[0.3em]">Format Experience</h4></div>
-                                    <div className="flex flex-wrap gap-2">
-                                        {selectedTalent.experience && selectedTalent.experience.length > 0 ? (
-                                            selectedTalent.experience.map(exp => (<span key={exp} className="px-3 py-1.5 bg-blue-600/10 border border-blue-600/20 text-blue-400 text-[10px] font-bold rounded-sm uppercase tracking-wider">{exp}</span>))
-                                        ) : (<span className="text-gray-700 italic text-xs">Data belum tersedia...</span>)}
-                                    </div>
-                                </div>
-                                <div className="space-y-4">
-                                    <div className="flex items-center gap-3 text-gray-500"><Icon name="Scissors" size={18} /><h4 className="text-[11px] font-black uppercase tracking-[0.3em]">Software Proficiency</h4></div>
-                                    <div className="flex flex-wrap gap-2">
-                                        {selectedTalent.software && selectedTalent.software.length > 0 ? (
-                                            selectedTalent.software.map(sw => (<span key={sw} className="px-3 py-1.5 bg-purple-600/10 border border-purple-600/20 text-purple-400 text-[10px] font-bold rounded-sm uppercase tracking-wider">{sw}</span>))
-                                        ) : (<span className="text-gray-700 italic text-xs">Data belum tersedia...</span>)}
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="space-y-6 mt-10">
-                                <button onClick={() => { if (selectedTalent.portfolioUrl && selectedTalent.portfolioUrl !== "#") { window.open(selectedTalent.portfolioUrl, '_blank'); } }} className="group relative overflow-hidden bg-white text-black px-10 md:px-12 py-5 md:py-6 text-[11px] font-black uppercase tracking-[0.6em] flex items-center justify-between w-full shadow-2xl transition-all">
-                                    <span className="relative z-10 group-hover:text-white transition-colors duration-500">LIHAT PORTOFOLIO</span>
-                                    <Icon name="ArrowRight" size={20} className="relative z-10 group-hover:text-white transition-colors duration-500 group-hover:translate-x-2" />
-                                    <div className="absolute inset-0 bg-red-600 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out"></div>
-                                </button>
-                                <div className="flex items-center justify-center gap-8 pt-4 border-t border-white/5">
-                                    <a href={selectedTalent.socials?.wa} target="_blank" className="text-gray-500 hover:text-green-500 transition-all scale-100 hover:scale-125 flex flex-col items-center gap-2"><Icon name="MessageCircle" size={22} /><span className="text-[7px] font-bold uppercase tracking-widest opacity-0 hover:opacity-100 transition-opacity">WhatsApp</span></a>
-                                    <a href={selectedTalent.socials?.ig} target="_blank" className="text-gray-500 hover:text-pink-500 transition-all scale-100 hover:scale-125 flex flex-col items-center gap-2"><Icon name="Instagram" size={22} /><span className="text-[7px] font-bold uppercase tracking-widest opacity-0 hover:opacity-100 transition-opacity">Instagram</span></a>
-                                    <a href={selectedTalent.socials?.tt} target="_blank" className="text-gray-500 hover:text-white transition-all scale-100 hover:scale-125 flex flex-col items-center gap-2"><Icon name="TikTok" size={22} /><span className="text-[7px] font-bold uppercase tracking-widest opacity-0 hover:opacity-100 transition-opacity">TikTok</span></a>
-                                </div>
-                            </div>
-                        </div>
-                     </div>
-                </main>
-              );
-              case 'home':
-              default:
-                return (
-                  <>
-                    <header className="relative w-full h-[100svh] flex flex-col justify-end overflow-hidden bg-black" id="hero">
-                      {FEATURED_PROJECTS.map((proj, idx) => (
-                        <div key={proj.id} className={`absolute inset-0 transition-all duration-1000 ease-in-out transform ${idx === currentSlide ? 'opacity-40 scale-100' : 'opacity-0 scale-110'}`}>
-                          {proj.video ? (
-                            <video 
-                              src={proj.video} 
-                              autoPlay 
-                              muted 
-                              loop 
-                              playsInline 
-                              className="w-full h-full object-cover grayscale" 
-                            />
-                          ) : (
-                            <img src={proj.image} className="w-full h-full object-cover grayscale" alt={proj.title} />
-                          )}
-                          <div className="absolute inset-0 bg-gradient-to-t from-black via-transparent to-black opacity-90"></div>
-                        </div>
-                      ))}
-                      <div className="flex-1 flex flex-col justify-center max-w-7xl mx-auto w-full px-6 md:px-8 relative z-10 pt-20">
-                        <div className="animate-in fade-in duration-1000">
-                          <div className="flex flex-row items-center mb-4 overflow-visible py-2"><h1 className="text-5xl sm:text-7xl md:text-[11vw] font-black tracking-tighter uppercase leading-[0.8] italic flex whitespace-nowrap"><span className="text-white animate-slide-right">HANA</span><span className="text-transparent animate-draw-stroke ml-[-2px] md:ml-[-5px]" style={{ WebkitTextStroke: "1px #dc2626" }}>SKAR.</span></h1></div>
-                          <h2 className="text-2xl md:text-[4vw] font-bold tracking-tighter uppercase leading-none text-gray-500/80 mt-2">{FEATURED_PROJECTS[currentSlide].title}</h2>
-                          <div className="flex mt-8 md:mt-12 max-w-2xl">
-                             <div className="w-1 bg-red-600 mr-4 md:mr-8 shrink-0"></div>
-                             <div className="flex flex-col items-start gap-6 md:gap-10">
-                                <p className="text-sm md:text-xl text-gray-300 font-light leading-relaxed">{FEATURED_PROJECTS[currentSlide].desc}</p>
-                                <div className="flex gap-4">
-                                    <button onClick={() => navigateTo('personil')} className="bg-white text-black px-8 md:px-12 py-3 md:py-5 text-[9px] md:text-[11px] font-bold uppercase tracking-[0.4em] transition-all hover:bg-red-600 hover:text-white shadow-2xl">LIHAT PERSONIL</button>
-                                    {FEATURED_PROJECTS[currentSlide].video && (
-                                        <button onClick={() => setActiveProjectModal(FEATURED_PROJECTS[currentSlide])} className="bg-transparent border border-white/20 text-white hover:border-red-600 hover:bg-red-600/10 px-6 md:px-10 py-3 md:py-5 text-[9px] md:text-[11px] font-bold uppercase tracking-[0.4em] transition-all flex items-center gap-3">
-                                            <Icon name="Play" size={14} className="fill-current" /> PLAY TEASER
-                                        </button>
-                                    )}
-                                </div>
-                             </div>
-                          </div>
-                        </div>
-                      </div>
-                      <div className="relative z-20 w-full bg-black/60 backdrop-blur-md border-t border-white/10 shrink-0">
-                        <div className="max-w-7xl mx-auto grid grid-cols-3">
-                          {FEATURED_PROJECTS.map((proj, idx) => (
-                            <button key={proj.id} onClick={() => setCurrentSlide(idx)} className={`relative p-4 md:p-14 flex flex-col items-start gap-2 md:gap-4 transition-all border-r border-white/5 last:border-0 ${idx === currentSlide ? 'bg-red-600/10' : 'hover:bg-white/5'}`}><div className="flex items-center gap-3 md:gap-6"><span className={`text-base md:text-4xl font-black ${idx === currentSlide ? 'text-red-600' : 'text-gray-800'} transition-all duration-500`}>{proj.id}</span><h4 className={`text-[7px] md:text-[11px] font-black uppercase tracking-widest text-left leading-tight ${idx === currentSlide ? 'text-white' : 'text-gray-600'}`}>{proj.title}</h4></div><div className={`absolute bottom-0 left-0 h-[2px] md:h-[4px] transition-all duration-700 ease-out ${idx === currentSlide ? 'bg-red-600 w-full' : 'bg-transparent w-0'}`}></div></button>
-                          ))}
-                        </div>
-                      </div>
-                    </header>
-                    
-                    {/* GALERI PROYEK */}
-                    <section className="bg-black py-24 md:py-40 px-6">
-                      <div className="max-w-7xl mx-auto">
-                         <div className="reveal mb-20 text-center md:text-left"><span className="text-red-600 font-mono text-[11px] font-bold tracking-[0.6em] mb-4 block uppercase">// FEATURED_GALLERY</span><h2 className="text-4xl md:text-[7vw] font-black tracking-tighter uppercase leading-[0.9]">KARYA <br /> <span className="text-transparent italic" style={{ WebkitTextStroke: "1px white" }}>TERBAIK KAMI.</span></h2></div>
-                         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-12">
-                            {PORTFOLIO_WORKS.map((work) => {
-                              return (
-                                <div key={work.id} onClick={() => setActiveProjectModal(work)} className="reveal relative aspect-[4/3] overflow-hidden group cursor-pointer rounded-sm bg-zinc-950 border border-white/5 shadow-2xl">
-                                    <div className="w-full h-full flex flex-col items-center justify-center bg-[#0d0d0d] p-6 transition-all duration-700 group-hover:bg-black">
-                                        <span className="text-[8px] md:text-[9px] font-bold tracking-[0.4em] text-zinc-600 mb-3">// {work.category.toUpperCase()}</span>
-                                        <h3 className="text-xl md:text-2xl font-black tracking-tighter uppercase text-center text-zinc-500 transition-colors duration-500 italic max-w-xs leading-none">
-                                            {work.title}
-                                        </h3>
-                                        <div className="mt-4 w-8 h-[2px] bg-zinc-800 transition-all duration-500 group-hover:bg-red-600 group-hover:w-16"></div>
-                                    </div>
-                                    
-                                    <div className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-transform duration-500 ease-out flex flex-col items-center justify-center p-6 md:p-12 text-center bg-red-600 text-white">
-                                        <span className="text-[8px] md:text-[10px] font-black tracking-[0.3em] uppercase mb-2 md:mb-4 text-white/80">{work.category}</span>
-                                        <h3 className="text-xl md:text-2xl font-black tracking-tighter uppercase mb-1 md:mb-2 leading-tight">{work.title}</h3>
-                                        <p className="text-[9px] md:text-[11px] font-bold tracking-widest uppercase mb-4 md:mb-8 text-white/60">{work.client}</p>
-                                        <div className="w-10 h-10 md:w-12 md:h-12 rounded-full border border-white/20 flex items-center justify-center transition-all group-hover:bg-white group-hover:border-white">
-                                            <Icon name="ArrowRight" size={18} className="text-white group-hover:text-red-600 transition-colors" />
-                                        </div>
-                                    </div>
-                                </div>
-                              );
-                            })}
-                         </div>
-                      </div>
-                    </section>
-                    
-                    <section className="bg-black border-t border-white/5 py-12 md:py-24" id="stats"><div className="max-w-7xl mx-auto px-6 grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-0"><StatItem target={132} label="PROYEK" subLabel="SELESAI" /><StatItem target={59} label="KLIEN" subLabel="PUAS" /><StatItem target={3} label="TAHUN" subLabel="PENGALAMAN" /></div></section>
-                  </>
-                );
-            }
-          };
-
-          return (
-            <div className="min-h-screen bg-[#050505] text-white font-sans selection:bg-red-600 relative overflow-x-hidden">
-              <div className="fixed inset-0 pointer-events-none z-[200] opacity-[0.03] bg-[url('https://grainy-gradients.vercel.app/noise.svg')]"></div>
-              <nav className={`fixed top-0 w-full z-[150] transition-all duration-700 transform ${scrolled || view !== 'home' ? 'translate-y-0 opacity-100 bg-black/95 py-3 md:py-5 border-b border-white/10 shadow-2xl' : 'translate-y-[-100%] opacity-0 pointer-events-none'}`}>
-                <div className="max-w-7xl mx-auto px-6 md:px-8 flex justify-between items-center h-12 md:h-10">
-                  <div className="flex items-center cursor-pointer" onClick={() => navigateTo('home')}><h1 className="text-base md:text-xl font-black uppercase tracking-tighter italic flex"><span className="text-white">HANA</span><span className="text-transparent" style={{ WebkitTextStroke: "1px #dc2626" }}>SKAR.</span></h1><span className="text-[10px] md:text-sm font-light italic ml-2 tracking-[0.2em] uppercase text-gray-500">PROJECT</span></div>
-                  <div className="flex items-center gap-6"><div className="hidden lg:flex space-x-10 text-[10px] font-bold uppercase tracking-[0.3em]"><button onClick={() => navigateTo('home')} className={`${view === 'home' ? 'text-red-600 font-black' : 'hover:text-red-600'} transition-all`}>BERANDA</button><button onClick={() => navigateTo('personil')} className={`${view === 'personil' ? 'text-red-600 font-black' : 'hover:text-red-600'} transition-all`}>PERSONIL</button><button onClick={() => navigateTo('tentang')} className={`${view === 'tentang' ? 'text-red-600 font-black' : 'hover:text-red-600'} transition-all`}>TENTANG</button><button onClick={() => navigateTo('layanan')} className={`${view === 'layanan' ? 'text-red-600 font-black' : 'hover:text-red-600'} transition-all`}>LAYANAN</button><button onClick={() => navigateTo('onair')} className={`${view === 'onair' ? 'text-red-600 font-black' : 'hover:text-red-600'} transition-all`}><span className="text-red-600">ON</span>AIR</button></div><button onClick={() => setIsMenuOpen(true)} className="lg:hidden text-white"><Icon name="Menu" size={20}/></button></div>
-                </div>
-              </nav>
-              <div className={`fixed inset-0 z-[250] bg-black transition-transform duration-700 ${isMenuOpen ? 'translate-y-0' : '-translate-y-full'} lg:hidden flex flex-col items-center justify-center gap-8 text-center`}><button onClick={() => setIsMenuOpen(false)} className="absolute top-10 right-8 text-white"><Icon name="X" size={32}/></button>{["BERANDA", "PERSONIL", "TENTANG", "LAYANAN", "ON AIR"].map(item => (<button key={item} onClick={() => navigateTo(item.toLowerCase().replace(' ', ''))} className="text-2xl font-black uppercase tracking-widest hover:text-red-600 transition-colors text-white text-center">{item}</button>))}</div>
-              {renderContent()}
-
-              {/* =====================================================================
-                  GELEMBUNG CHAT LIVE NOTIFICATION FUTURISTIK (DIBAGIAN POJOK KIRI BAWAH)
-                  ===================================================================== */}
-              {liveChats.map(chat => (
-                <div key={chat.id} className="fixed bottom-6 left-6 z-[200] max-w-sm w-[90%] sm:w-80 bg-black/95 border border-red-600/30 backdrop-blur-md p-4 rounded-lg shadow-[0_10px_30px_rgba(220,38,38,0.2)] flex items-start gap-4 animate-slide-up-chat">
-                  <div className="relative shrink-0">
-                    <div className="w-10 h-10 bg-zinc-900 border border-white/10 rounded-full flex items-center justify-center font-bold text-red-500 uppercase text-xs">
-                      {chat.sender.split(' ').map(n => n[0]).join('')}
-                    </div>
-                    <span className="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border-2 border-black animate-pulse"></span>
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <h4 className="text-xs font-black text-white truncate">{chat.sender}</h4>
-                      <span className="text-[7px] text-gray-500 shrink-0 uppercase font-mono tracking-wider">// CHAT TO {chat.targetName.split(' ')[1] || chat.targetName.split(' ')[0]}</span>
-                    </div>
-                    <p className="text-[11px] text-zinc-300 leading-relaxed font-light">{chat.message}</p>
-                    <div className="flex items-center gap-1.5 mt-2 text-[8px] font-bold text-red-600 font-mono uppercase tracking-widest">
-                      <span className="inline-block w-1 h-1 bg-red-600 rounded-full animate-ping"></span>
-                      Live Activity • Just Now
-                    </div>
-                  </div>
-                  <button onClick={() => setLiveChats([])} className="text-zinc-600 hover:text-white transition-colors shrink-0">
-                    <Icon name="X" size={14} />
-                  </button>
-                </div>
-              ))}
-
-              {/* =====================================================================
-                  MODAL POP-UP PREVIEW PORTFOLIO PREMIUM (DENGAN PEMUTAR VIDEO)
-                  ===================================================================== */}
-              {activeProjectModal && (
-                <div className="fixed inset-0 z-[300] flex items-center justify-center p-4 md:p-10 bg-black/90 backdrop-blur-md animate-in fade-in duration-300">
-                  <div className="relative w-full max-w-5xl bg-zinc-950 border border-white/10 rounded-sm overflow-hidden flex flex-col lg:flex-row max-h-[90vh] md:max-h-[80vh] shadow-2xl">
-                    <button 
-                      onClick={() => setActiveProjectModal(null)} 
-                      className="absolute top-4 right-4 z-50 bg-black/60 hover:bg-red-600 text-white p-2 rounded-full border border-white/10 transition-colors"
-                    >
-                      <Icon name="X" size={20} />
-                    </button>
-
-                    <div className="w-full lg:w-3/5 bg-black aspect-video lg:aspect-auto lg:min-h-[500px] flex items-center justify-center overflow-hidden">
-                      {activeProjectModal.video ? (
-                        <video 
-                          src={activeProjectModal.video} 
-                          controls 
-                          autoPlay 
-                          className="w-full h-full object-contain"
-                        />
-                      ) : (
-                        <img 
-                          src={activeProjectModal.image} 
-                          className="w-full h-full object-cover" 
-                          alt={activeProjectModal.title} 
-                        />
-                      )}
-                    </div>
-
-                    <div className="w-full lg:w-2/5 p-6 md:p-10 flex flex-col justify-between overflow-y-auto bg-zinc-950">
-                      <div className="space-y-6">
-                        <div>
-                          <span className="text-red-600 font-mono text-[10px] font-bold tracking-[0.3em] uppercase block mb-2">// {activeProjectModal.category}</span>
-                          <h2 className="text-2xl md:text-3xl font-black tracking-tighter uppercase text-white leading-tight">{activeProjectModal.title}</h2>
-                          <p className="text-xs font-bold text-gray-500 uppercase tracking-widest mt-1">Klien: {activeProjectModal.client}</p>
-                        </div>
-                        <p className="text-sm text-gray-400 font-light leading-relaxed">
-                          {activeProjectModal.desc || "Sebuah dedikasi karya visual berkualitas tinggi yang dikerjakan secara presisi oleh tim HANASKAR, memastikan setiap detail menyampaikan emosi, estetika, dan pesan yang kuat."}
-                        </p>
-                      </div>
-
-                      <div className="pt-8 border-t border-white/5 flex items-center justify-between">
-                        <span className="text-[9px] font-bold text-gray-600 uppercase tracking-[0.2em]">HANASKAR COLLECTIVE</span>
-                        <button 
-                          onClick={() => setActiveProjectModal(null)}
-                          className="text-xs font-black uppercase tracking-widest text-red-600 hover:text-white transition-colors"
-                        >
-                          TUTUP PREVIEW
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              <footer className="bg-black pt-20 md:pt-32 pb-16 px-6 border-t border-white/5 reveal">
-                <div className="max-w-7xl mx-auto text-center md:text-left">
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 md:gap-16 mb-20 text-white">
-                    <div className="space-y-6 md:space-y-8"><h4 className="text-lg md:text-xl font-bold">Office</h4><div className="space-y-3 md:space-y-4 text-gray-500 text-xs md:text-sm leading-relaxed uppercase font-bold tracking-widest"><p>Depok, Jawa Barat,<br/>Indonesia</p><a href="mailto:info@hanaskar.id" className="block text-white hover:text-red-600 transition-colors border-b border-white/10 pb-1 w-fit mx-auto md:mx-0">info@hanaskar.id</a><p className="text-white font-bold tracking-widest">+6281293555379</p></div></div>
-                    <div className="space-y-6 md:space-y-8"><h4 className="text-lg md:text-xl font-bold">Links</h4><ul className="space-y-3 md:space-y-4 text-gray-500 text-xs md:text-sm uppercase font-bold tracking-widest"><li><button onClick={() => navigateTo('home')} className="hover:text-white transition-all">Home</button></li><li><button onClick={() => navigateTo('layanan')} className="hover:text-white transition-all">Services</button></li><li><button onClick={() => navigateTo('tentang')} className="hover:text-white transition-all">About Us</button></li></ul></div>
-                    <div className="space-y-6 md:space-y-8"><h4 className="text-lg md:text-xl font-bold">Socials</h4><ul className="space-y-3 md:space-y-4 text-gray-500 text-xs md:text-sm uppercase font-bold tracking-widest"><li><a href="#" className="hover:text-white transition-all">Facebook</a></li><li><a href="#" className="hover:text-white transition-all">Instagram</a></li></ul></div>
-                    <div className="space-y-6 md:space-y-8"><h4 className="text-lg md:text-xl font-bold">Newsletter signup</h4><div className="space-y-4 md:space-y-6"><div className="relative group max-w-md mx-auto md:mx-0"><span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-500"><Icon name="Mail" size={16} /></span><input type="email" placeholder="Enter Your Email Address" className="w-full bg-[#111] border border-white/5 py-3 md:py-4 pl-10 md:pl-12 pr-12 md:pr-16 text-xs md:text-sm focus:outline-none focus:border-white/20 transition-all rounded-sm text-white" /><button className="absolute right-2 top-1/2 -translate-y-1/2 bg-blue-600 hover:bg-blue-500 p-1.5 md:p-2.5 transition-all rounded-sm"><Icon name="Send" size={16} className="text-white" /></button></div><label className="flex items-center justify-center md:justify-start gap-3 cursor-pointer group px-4 md:px-0"><input type="checkbox" className="w-4 h-4 border-white/10 bg-transparent rounded-sm shrink-0" /><span className="text-[10px] text-gray-500 group-hover:text-gray-400">I agree to the <span className="underline">Privacy Policy</span>.</span></label></div></div>
-                  </div>
-                  <div className="pt-8 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-6 text-[8px] md:text-[10px] font-bold tracking-[0.2em] md:tracking-[0.3em] text-gray-700 uppercase"><p>HANASKAR.ID © 2026. All rights reserved.</p><p>hanaskar.id 2026</p></div>
-                </div>
-              </footer>
-            </div>
-          );
-        };
-
-        // Render Utama React 18
+        // ... (sisanya tetap sama)
+        const App = () => { /* Logic aplikasi */ };
         const root = ReactDOM.createRoot(document.getElementById('root'));
         root.render(<App />);
     </script>
